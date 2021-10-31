@@ -15,7 +15,7 @@ cdk deploy
 
 ```
 
-Skip VPC creation and  use existing VPC. Here EKS Cluster and Node Group will be created 
+Skip VPC creation and use existing VPC - Creates EKS Cluster and Node Group
 
 ```bash
 cdk deploy -c use_vpc_id=vpc-0bxxxxxxxxxxx
@@ -29,7 +29,7 @@ cdk deploy -c use_vpc_id=vpc-0bxxxxxxxxxxx -c no_ng=1
 
 ```
 
-Skipping Nodegroup - it will only create only VPC and Eks Control plane.
+Skip Nodegroup - Creates only VPC and EKS Control plane.
 
 ```bash
 cdk deploy -c no_ng=1
