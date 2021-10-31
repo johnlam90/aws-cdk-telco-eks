@@ -63,15 +63,15 @@ export class EksCluster extends Construct {
     //todo fix this when using context variables
     const k8sSubnetA = vpc.selectSubnets({
       subnetType: SubnetType.PRIVATE_WITH_NAT,
-      availabilityZones: ['us-east-2a'],
+      availabilityZones: [this.node.tryGetContext('private.subnetA')],
     });
     const k8sSubnetB = vpc.selectSubnets({
       subnetType: SubnetType.PRIVATE_WITH_NAT,
-      availabilityZones: ['us-east-2b'],
+      availabilityZones: [this.node.tryGetContext('private.subnetB')],
     });
     const k8sSubnetC = vpc.selectSubnets({
       subnetType: SubnetType.PRIVATE_WITH_NAT,
-      availabilityZones: ['us-east-2c'],
+      availabilityZones: [this.node.tryGetContext('private.subnetC')],
     });
     const k8sSubnet1 = k8sSubnetA.subnetIds.toString();
     const subnetA = Subnet.fromSubnetId(this, 'SubnetFromIdA', k8sSubnet1);
@@ -396,7 +396,7 @@ export class EksCluster extends Construct {
         release: 'aws-ebs-csi-driver',
         namespace: 'kube-system',
         values: {
-          'image.repository': '602401143452.dkr.ecr.us-east-2.amazonaws.com/eks/aws-ebs-csi-driver',
+          'image.repository': `602401143452.dkr.ecr.${this.node.tryGetContext("nodegroup.region")}.amazonaws.com/eks/aws-ebs-csi-driver`,
           'account': account,
           'role': role2.roleName
         }
@@ -448,7 +448,7 @@ export class EksCluster extends Construct {
             release: 'aws-efs-csi-driver',
             namespace: 'kube-system',
             values: {
-              'image.repository': '602401143452.dkr.ecr.us-east-2.amazonaws.com/eks/aws-efs-csi-driver',
+              'image.repository': `602401143452.dkr.ecr.${this.node.tryGetContext("nodegroup.region")}.amazonaws.com/eks/aws-efs-csi-driver`,
               'account': account,
               'role': role.roleName
             }

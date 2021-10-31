@@ -17,14 +17,10 @@
     "nodegroup.sshkey": "eks-multus",
     "nodegroup.region": "us-east-2",
     "multus.az": "us-east-2a",
-    "eks.k8ssubnetid": "subnet-0b06234189256cfab",
-    "eks.multussecgroup1": "sg-04e0a175b6e9611e7",
-    "eks.multussubnet2": "subnet-0b16b6eb7025be6a4",
-    "eks.multussecgroup2": "sg-0fed1fe96413921e6",
-    "eks.multussubnet3": "subnet-02f5f45faab44dfed", 
-    "eks.multussecgroup3": "sg-0386608b7ca2179eb",
+    "private.subnetA": "us-east-2a",
+    "private.subnetB": "us-east-2b",
+    "private.subnetC": "us-east-2c",
     "eks.nametag": "ng-udm",
-    "eks.multussecgroup4": "sg-0045b2ad43a7a6c6f",
     "cnf": "udm"
   }
 }
