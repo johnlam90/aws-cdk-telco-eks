@@ -46,4 +46,3 @@ Deploy Only VPC and Skip the rest of the deployment
 ```bash
 cdk deploy -c only_vpc=1
 ```
-
