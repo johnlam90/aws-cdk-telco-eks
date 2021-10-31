@@ -1,6 +1,6 @@
 # Telco Grade EKS cluster with CDK
 
-![Screen_Shot_2021-10-26_at_12.43.18_AM](/uploads/ba9b997dbb7466734b8c14c176bf7374/Screen_Shot_2021-10-26_at_12.43.18_AM.png)
+<img width="1220" alt="Screen_Shot_2021-10-26_at_12 43 18_AM" src="https://user-images.githubusercontent.com/8691485/139601728-2230f06e-f2a8-4046-937f-5993e7125840.png">
 
 ## Pre-requisites
 
