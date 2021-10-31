@@ -8,14 +8,14 @@
 
 ## Useage
 
-Create vpc eks-cluster and NG
+Create VPC,EKS cluster and Node Group
 
 ```bash
 cdk deploy
 
 ```
 
-Skip VPC creation and  use existing vpc-id
+Skip VPC creation and  use existing VPC. Here EKS Cluster and Node Group will be created 
 
 ```bash
 cdk deploy -c use_vpc_id=vpc-0bxxxxxxxxxxx
