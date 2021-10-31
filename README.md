@@ -5,6 +5,7 @@
 ## Pre-requisites
 
 - AWS Credentials
+- Key-Pair 
 
 ## Useage
 
