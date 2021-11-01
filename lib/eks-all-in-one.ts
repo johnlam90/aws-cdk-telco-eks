@@ -23,6 +23,7 @@ export class EksCluster extends Construct {
   constructor(scope: Construct, id: string, props: EksClusterProps) {
     super(scope, id, );
 
+    //const vpc = getOrCreateVpc(this);
 
     const vpc = props.vpc ?? new ec2.Vpc(this, 'Vpc', {
       cidr: '172.16.0.0/16',
@@ -75,8 +76,10 @@ export class EksCluster extends Construct {
     });
     const k8sSubnet1 = k8sSubnetA.subnetIds.toString();
     const subnetA = Subnet.fromSubnetId(this, 'SubnetFromIdA', k8sSubnet1);
+
     const k8sSubnet2 = k8sSubnetB.subnetIds.toString();
     const subnetB = Subnet.fromSubnetId(this, 'SubnetFromIdB', k8sSubnet2);
+    
     const k8sSubnet3 = k8sSubnetC.subnetIds.toString();
     const subnetC = Subnet.fromSubnetId(this, 'SubnetFromIdC', k8sSubnet3);
 
@@ -92,7 +95,7 @@ export class EksCluster extends Construct {
       });
       
 
-      //  * EKS Cluster creation
+      //* EKS Cluster creation
       const cluster = new eks.Cluster(this, 'Cluster', {
         clusterName: this.node.tryGetContext("eks.clustername"),
         outputClusterName: true,
@@ -112,13 +115,13 @@ export class EksCluster extends Construct {
         }],
         version: eks.KubernetesVersion.V1_21,
       });
-      // Adding my username to masters role 
+      //* Adding my username to masters role 
       cluster.awsAuth.addUserMapping(iam.User.fromUserName(this, 'johnlam90', 'johnlam90'), {
         groups: ["system:masters"],
         username: "johnlam90"
       });
 
-      // Use existing EKS Cluster
+      //* Use existing EKS Cluster
       const eksCluster = eks.Cluster.fromClusterAttributes(this, "eks-cluster", {
         clusterName: cluster.clusterName,
         vpc: vpc,
@@ -126,12 +129,12 @@ export class EksCluster extends Construct {
 
       const clusterOpenIdConnectIssuerUrl = cluster.clusterOpenIdConnectIssuerUrl
 
-      // then we create an OpenID connect provider using the issue url value we stored earlier 
+      //* Create an OpenID connect provider using the issue url value we stored earlier 
       const provider = new eks.OpenIdConnectProvider(this, 'Provider', {
         url: clusterOpenIdConnectIssuerUrl
       });
 
-      // now we attach the new OIDC provider to our EKS cluster  
+      //* Attach the new OIDC provider to our EKS cluster  
       eks.Cluster.fromClusterAttributes(this, `${this.node.tryGetContext("eks.clustername")}-oidc-provider`, {
         clusterName: this.node.tryGetContext("eks.clustername"),
         openIdConnectProvider: provider,
@@ -401,7 +404,7 @@ export class EksCluster extends Construct {
       });
 
 
-      // This nested if/else condtion is to check whether the nodegroup should be created or not.
+      //* This is a if/else condtion is to check whether the nodegroup should be created or not.
       const noNg = this.node.tryGetContext("no_ng") == '1' ? true : false;
       if (noNg) {
         console.log('no_ng is set to true, skipping NG');
@@ -546,9 +549,8 @@ systemctl enable amazon-ssm-agent --now
           launchTemplateName: "multus-launch-template"
         });
 
-        // Formatting required to pass subnet values to lambda function
+        //* Formatting required to pass subnet values to lambda function
         const subs = subnet1.subnetId + "," + subnet2.subnetId + "," + subnet3.subnetId + "," + subnet4.subnetId ;
-        //const subnetIds = subs.split(",");
 
         iam.ManagedPolicy.fromAwsManagedPolicyName(
           'service-role/AWSLambdaBasicExecutionRole',
@@ -556,7 +558,7 @@ systemctl enable amazon-ssm-agent --now
 
 
         //const k8sSubnet = ec2.Subnet.fromSubnetId(this, "k8s-subnet",this.node.tryGetContext("eks.k8ssubnetid"));
-        // Create a NodeGroup 
+        //* Create a NodeGroup 
         const ng = new eks.Nodegroup(this, "node-group", {
           cluster: eksCluster,
           minSize: this.node.tryGetContext("nodegroup.min"),
@@ -581,7 +583,7 @@ systemctl enable amazon-ssm-agent --now
         cdk.Tags.of(ng).add('Name', `${this.node.tryGetContext("cnf")}-ng-01`);
 
         ng.node.addDependency(launchTemplate);
-        // Add SSM access to Worker Nodes
+        //* Add SSM access to Worker Nodes
         ng.role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'))
         ng.role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMFullAccess'))
         ng.role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonEC2RoleforSSM'))
@@ -589,7 +591,7 @@ systemctl enable amazon-ssm-agent --now
 
         // 👇 add a managed policy to a group after creation
 
-        // Create Lambda for attaching 2nd ENI
+        //* Create Lambda for attaching 2nd ENI
         const attachEniPolicyStatement = new iam.PolicyStatement();
         attachEniPolicyStatement.addActions("ec2:CreateNetworkInterface",
           "ec2:DescribeInstances",
@@ -633,7 +635,7 @@ systemctl enable amazon-ssm-agent --now
         });
         lambdaAttachMultusEni.addToRolePolicy(attachEniPolicyStatement);
 
-        // Find the asgName for CWE
+        //* Find the asgName for CWE
         const customApiCallPolicyStatement = new iam.PolicyStatement();
         customApiCallPolicyStatement.addActions("eks:describeNodegroup");
         customApiCallPolicyStatement.addResources("*")
