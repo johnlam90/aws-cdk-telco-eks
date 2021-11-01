@@ -8,7 +8,7 @@ import * as custom from '@aws-cdk/custom-resources';
 import * as cdk from '@aws-cdk/core';
 import console = require('console');
 import {CfnJson,Construct,Duration} from '@aws-cdk/core';
-import {Instance,PrivateSubnet,Subnet,SubnetType} from '@aws-cdk/aws-ec2';
+import {Subnet,SubnetType} from '@aws-cdk/aws-ec2';
 import {ManagedPolicy} from '@aws-cdk/aws-iam';
 import * as efs from "@aws-cdk/aws-efs";
 import {App,Stack,StackProps} from '@aws-cdk/core';
@@ -33,11 +33,11 @@ export class EksCluster extends Construct {
           cidrMask: 19,
         },
 
-        {
+      {
           name: 'public-subnet-1',
           subnetType: ec2.SubnetType.PUBLIC,
           cidrMask: 19,
-        },
+       }, 
 
       ],
     });
@@ -90,9 +90,7 @@ export class EksCluster extends Construct {
       const clusterAdmin = new iam.Role(this, 'AdminRole', {
         assumedBy: new iam.AccountRootPrincipal()
       });
-      const workerRole = new iam.Role(this, 'EKSWorkerRole', {
-        assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com')
-      });
+      
 
       //  * EKS Cluster creation
       const cluster = new eks.Cluster(this, 'Cluster', {
@@ -134,7 +132,7 @@ export class EksCluster extends Construct {
       });
 
       // now we attach the new OIDC provider to our EKS cluster  
-      const clusterOidcProvider = eks.Cluster.fromClusterAttributes(this, `${this.node.tryGetContext("eks.clustername")}-oidc-provider`, {
+      eks.Cluster.fromClusterAttributes(this, `${this.node.tryGetContext("eks.clustername")}-oidc-provider`, {
         clusterName: this.node.tryGetContext("eks.clustername"),
         openIdConnectProvider: provider,
       });
@@ -390,7 +388,7 @@ export class EksCluster extends Construct {
         ),
       );
 
-      const ebs = cluster.addHelmChart(`aws-ebs-csi-driver`, {
+      cluster.addHelmChart(`aws-ebs-csi-driver`, {
         repository: 'https://johnlam90.github.io/helm-chart',
         chart: 'aws-ebs-csi-driver',
         release: 'aws-ebs-csi-driver',
@@ -485,26 +483,26 @@ export class EksCluster extends Construct {
             cidrBlock: '172.16.234.0/24',
             vpcId: vpc.vpcId,
         });
-        const subnet5 =  new ec2.Subnet(this, `${this.node.tryGetContext("cnf")}-multus-05`, {
-            availabilityZone: this.node.tryGetContext("multus.az"),
-            cidrBlock: '172.16.235.0/24',
-            vpcId: vpc.vpcId,
-        });
-        const subnet6 =  new ec2.Subnet(this, `${this.node.tryGetContext("cnf")}-multus-06`, {
-            availabilityZone: this.node.tryGetContext("multus.az"),
-            cidrBlock: '172.16.236.0/24',
-            vpcId: vpc.vpcId,
-        });
-        const subnet7 =  new ec2.Subnet(this, `${this.node.tryGetContext("cnf")}-multus-07`, {
-            availabilityZone: this.node.tryGetContext("multus.az"),
-            cidrBlock: '172.16.237.0/24',
-            vpcId: vpc.vpcId,
-        });
-        const subnet8 =  new ec2.Subnet(this, `${this.node.tryGetContext("cnf")}-multus-08`, {
-            availabilityZone: this.node.tryGetContext("multus.az"),
-            cidrBlock: '172.16.238.0/24',
-            vpcId: vpc.vpcId,
-        });
+        // const subnet5 =  new ec2.Subnet(this, `${this.node.tryGetContext("cnf")}-multus-05`, {
+        //     availabilityZone: this.node.tryGetContext("multus.az"),
+        //     cidrBlock: '172.16.235.0/24',
+        //     vpcId: vpc.vpcId,
+        // });
+        // const subnet6 =  new ec2.Subnet(this, `${this.node.tryGetContext("cnf")}-multus-06`, {
+        //     availabilityZone: this.node.tryGetContext("multus.az"),
+        //     cidrBlock: '172.16.236.0/24',
+        //     vpcId: vpc.vpcId,
+        // });
+        // const subnet7 =  new ec2.Subnet(this, `${this.node.tryGetContext("cnf")}-multus-07`, {
+        //     availabilityZone: this.node.tryGetContext("multus.az"),
+        //     cidrBlock: '172.16.237.0/24',
+        //     vpcId: vpc.vpcId,
+        // });
+        // const subnet8 =  new ec2.Subnet(this, `${this.node.tryGetContext("cnf")}-multus-08`, {
+        //     availabilityZone: this.node.tryGetContext("multus.az"),
+        //     cidrBlock: '172.16.238.0/24',
+        //     vpcId: vpc.vpcId,
+        // });
         //* Create Security Group for the Multus Subnets
         const NgSG2 = new ec2.SecurityGroup(this, `multus-${this.node.tryGetContext("cnf")}-sg`, {
           vpc: vpc,
@@ -552,7 +550,7 @@ systemctl enable amazon-ssm-agent --now
         const subs = subnet1.subnetId + "," + subnet2.subnetId + "," + subnet3.subnetId + "," + subnet4.subnetId ;
         //const subnetIds = subs.split(",");
 
-        const lambdaManagedPolicy = iam.ManagedPolicy.fromAwsManagedPolicyName(
+        iam.ManagedPolicy.fromAwsManagedPolicyName(
           'service-role/AWSLambdaBasicExecutionRole',
         );
 
@@ -690,7 +688,7 @@ systemctl enable amazon-ssm-agent --now
         });
         lambdaAutoReboot.addToRolePolicy(autoRebootPolicyStatement);
 
-        const customLambdaAutoReboot = new cdk.CustomResource(this, "CustomLambdaAutoReboot", {
+        new cdk.CustomResource(this, "CustomLambdaAutoReboot", {
           serviceToken: lambdaAutoReboot.functionArn,
           properties: {
             AsgName: asgName,

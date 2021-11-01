@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
-import * as cdk from '@aws-cdk/core';
 import { MyStack } from '../lib/eks-all-in-one';
 import { App } from '@aws-cdk/core';
 
