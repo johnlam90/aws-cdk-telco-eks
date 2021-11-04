@@ -5,6 +5,12 @@
 ## Pre-requisites
 
 - AWS Credentials
+```bash
+export AWS_ACCESS_KEY_ID="AXXXXXABCDEFFHIG"
+export AWS_SECRET_ACCESS_KEY="ZXXJFJFJFJFJFJJFJFJFJFJJFXXXX"
+export AWS_DEFAULT_REGION=us-east-2
+```
+
 - Key-Pair 
 
 ## Useage
@@ -47,3 +53,7 @@ Deploy Only VPC and Skip the rest of the deployment
 ```bash
 cdk deploy -c only_vpc=1
 ```
+
+## References:
+- [eks-install-guide-for-multus](https://github.com/aws-samples/eks-install-guide-for-multus/blob/main/README.md)
+- [aws-cdk-eks-example](https://github.com/pahud/aws-cdk-eks-sample)
