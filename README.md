@@ -13,7 +13,7 @@ export AWS_DEFAULT_REGION=us-east-2
 
 - Key-Pair 
 
-## Useage
+## Usage
 
 Create VPC,EKS cluster and Node Group
 
