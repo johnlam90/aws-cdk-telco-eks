@@ -38,7 +38,7 @@ export class EksCluster extends Construct {
           name: 'public-subnet-1',
           subnetType: ec2.SubnetType.PUBLIC,
           cidrMask: 19,
-       }, 
+      }, 
 
       ],
     });
@@ -206,7 +206,7 @@ export class EksCluster extends Construct {
         },
       });
 
-      // Condiditon for EBS Access
+      // Condition for EBS Access
       const conditions2 = new CfnJson(this, 'ConditionJson2', {
         value: {
           [`${openIdConnectProvider}:sub`]: `system:serviceaccount:kube-system:ebs-csi-controller-sa`,
@@ -216,9 +216,9 @@ export class EksCluster extends Construct {
       const role = new iam.Role(this, `${this.node.tryGetContext("eks.clustername")}-fs-iam-role`, {
         roleName: `AmazonEKS_EFS_CSI_DriverRole_CDK-${this.node.tryGetContext("eks.clustername")}`,
         assumedBy: new iam.FederatedPrincipal(`arn:aws:iam::${account}:oidc-provider/${openIdConnectProvider}`, {
-            'StringEquals': conditions
+          'StringEquals': conditions
           },
-          "sts:AssumeRoleWithWebIdentity")
+        "sts:AssumeRoleWithWebIdentity")
       });
 
       role.addManagedPolicy(
@@ -437,7 +437,7 @@ export class EksCluster extends Construct {
             },
             throughputMode: efs.ThroughputMode.BURSTING,
             removalPolicy: cdk.RemovalPolicy.DESTROY,
-            //provisionedThroughputPerSecond: cdk.Size.mebibytes(512),
+            //provisionedThroughputPerSecond: cdk.Size.megabytes(512),
             lifecyclePolicy: efs.LifecyclePolicy.AFTER_14_DAYS, // files are not transitioned to infrequent access (IA) storage by default
             performanceMode: efs.PerformanceMode.GENERAL_PURPOSE, // default
             securityGroup: NgSG,
@@ -557,7 +557,7 @@ systemctl enable amazon-ssm-agent --now
         );
 
 
-        //const k8sSubnet = ec2.Subnet.fromSubnetId(this, "k8s-subnet",this.node.tryGetContext("eks.k8ssubnetid"));
+        //const k8sSubnet = ec2.Subnet.fromSubnetId(this, "k8s-subnet",this.node.tryGetContext("eks.k8subnetid"));
         //* Create a NodeGroup 
         const ng = new eks.Nodegroup(this, "node-group", {
           cluster: eksCluster,

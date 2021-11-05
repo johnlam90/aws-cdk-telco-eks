@@ -1,6 +1,9 @@
 {
     "better-comments.multilineComments": true,
     "better-comments.highlightPlainText": false,
-    "editor.foldingImportsByDefault": true
+    "editor.foldingImportsByDefault": true,
+    "cSpell.words": [
+        "kubernetes"
+    ]
 
 }
